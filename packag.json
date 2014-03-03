@@ -1,0 +1,19 @@
+{
+    "name": "gulp-seajs",
+    "version": "0.1.0",
+    "description": "seajs builder for gulp",
+    "main": "index.js",
+    "author": {
+        "name": "chenllos",
+        "site": "blog.chenllos.com"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "event-stream": "~3.0.18",
+        "replacestream": "0.0.6"
+    },
+    "keywords": [
+        "gulpplugin",
+        "seajs"
+    ]
+}
