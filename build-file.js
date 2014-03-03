@@ -11,6 +11,9 @@ var MODULEHEADER_RE = /define\(.*\){\n*/;
 // var mainID = '/LIB/gulp-seajs/test/dest/testCtrl.js';
 
 
+// console.log( __dirname);
+
+
 var G = {
     requriedDep: {},
     ProductCode:  '',
@@ -72,6 +75,7 @@ function collectDep( code ){
 }
 
 function consProductCode( code, id, dep ){
+    // console.log( ' module id is: ' + id );
     var pre = 'define( \''+ id + '\', ' + '[' + '], function( require, exports, module){\n';
     code = code.replace( MODULEHEADER_RE, pre);
     return code + '\n';
