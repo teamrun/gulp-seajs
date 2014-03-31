@@ -29,18 +29,29 @@ function buildSeajsFile( srcPath, id, code ){
     if( !code ){
         code = fs.readFileSync( srcPath, 'utf-8');
     }
-    
+    // console.log( id );
     var rawDep =  collectDep( code );
     G.ProductCode +=  consProductCode( code, id, rawDep );
 
+    G.depMap[ id ] = [];
+
     rawDep.forEach( function( x, i, a ){
         var depItem = path.resolve( path.dirname( srcPath ), x );
+        
+
         if( G.requriedDep[ depItem ] ){
             // 已经添加的依赖不再操作
         }
         else{
             // 添加到"已依赖"
             G.requriedDep[ depItem ] = true;
+
+            // 根据mainID 和 模块依赖关系, 推断出被依赖的模块的id
+            // 依据: 主模块被use后, 会根据内部的require的id去找依赖的模块, 依赖的id, 就是模块之间的路径关系
+            var subID = path.resolve( path.dirname( id ), x );
+            // 构建依赖表
+            G.depMap[id].push( subID );
+
             // 带有{}的路径,里面填充的是seajs.config.vars,这是运行时依赖.不通过这个来解析路径, 保留即可
             if( pathWithVar.test( depItem ) ){
                 
@@ -48,19 +59,12 @@ function buildSeajsFile( srcPath, id, code ){
             else{
                 // 递归处理: 读code 取依赖, 检测, 构建模块
                 // console.log( depItem );
-
-                // 根据mainID 和 模块依赖关系, 推断出被依赖的模块的id
-                // 依据: 主模块被use后, 会根据内部的require的id去找依赖的模块, 依赖的id, 就是模块之间的路径关系
-                var subID = path.resolve( path.dirname( id ), x );
                 buildSeajsFile( depItem+'.js', subID  );
             }
         }
     } );
 }
 
-
-// buildSeajsFile( srcFile, mainID );
-// console.log( G.ProductCode );
 
 
 
@@ -93,6 +97,38 @@ function consProductCode( code, id, dep ){
     return code + '\n';
 }
 
+function fillDepArr( depMap, proCode, mainID ){
+    var depArr, replacEE, replacER;
+
+    for( var key in depMap ){
+        depArr = [];
+        replacEE = 'define( \''+ key + '\', ' + '[' + ']';
+        getDepArr( depMap, key, depArr );
+        if( depArr.length > 0 ){
+            replacER = 'define( \'' + key + '\', [\''+ depArr.join('\', \'') +'\']';
+            proCode = proCode.replace( replacEE, replacER );
+            // console.log( proCode.substr( proCode.indexOf( replacEE ), 200 ) );
+            // console.log( replacEE );
+            // console.log( replacER );
+            // console.log( proCode.indexOf( replacEE ) );
+        }
+    }
+    // console.log( proCode.substr(0,200) );
+    return proCode;
+
+    
+
+    function getDepArr( depMap, id, depArr ){
+        depArr = depArr? depArr : [];
+        if( depMap[ id ] && depMap[ id ].length > 0 ){
+            for( var i=0; i<depMap[ id ].length; i++ ){
+                 depArr.push( depMap[ id ][i] );
+                getDepArr( depMap, depMap[ id ][i], depArr );
+            }
+        }
+    }
+}
+
 
 
 
@@ -104,7 +140,7 @@ var seajsHeadArr = [
     'define( function(require, exports, module ){',
     'define( \'leagalID\', function(require, exports, module ){',
     'define( \'leagalID\', [\'dep1\', \'dep2\'], function(require, exports, module ){'
- ];
+];
 
 
 // seajsHeadArr.forEach( function(x){
@@ -117,14 +153,18 @@ module.exports = function( srcPath, mainID, code ){
     // console.log( srcPath );
     G = {
         requriedDep: {},
-        ProductCode:  ''
+        ProductCode:  '',
+        depMap: {
+
+        }
     };
 
     // add target file to required
     G.requriedDep[ path.resolve(srcPath) ] = true;
     
     buildSeajsFile( srcPath, mainID );
+    // 所有的文件都构建好之后才有完整的依赖列表
+    // console.log( G.depMap );
 
-    console.log( G.requriedDep );
-    return G.ProductCode;
+    return fillDepArr( G.depMap, G.ProductCode, mainID );
 };

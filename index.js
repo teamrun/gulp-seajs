@@ -9,9 +9,9 @@ module.exports = function( mainID ){
 
         var code = String(file.contents);
         var srcPath = String(file.path);
-        console.time('seajs');
+        // console.time('seajs');
         file.contents = new Buffer( buildTool( srcPath, mainID, code ) );
-        console.timeEnd('seajs');
+        // console.timeEnd('seajs');
 
         callback( null, file);
     };
