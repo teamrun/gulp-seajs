@@ -1,5 +1,4 @@
 var es = require('event-stream');
-var rs = require('replacestream');
 var stream = require('stream');
 
 var buildTool = require('./build-file');
