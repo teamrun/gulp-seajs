@@ -36,8 +36,10 @@ function buildSeajsFile( srcPath, id, code ){
     G.depMap[ id ] = [];
 
     rawDep.forEach( function( x, i, a ){
+        if( path.extname( x ) === '.js' ){
+            x = x.substring( 0, x.lastIndexOf( '.js' ) );
+        }
         var depItem = path.resolve( path.dirname( srcPath ), x );
-        
 
         if( G.requriedDep[ depItem ] ){
             // 已经添加的依赖不再操作
