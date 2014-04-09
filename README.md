@@ -33,7 +33,7 @@ result:
 ### param: 
 
 * gulp.src:  you should read the main js file which you seajs.use
-* mainID: the main Module ID for the seajs app entrance
+* mainID: the main Module ID for the seajs app entrance. Should be an absolute path based on your project.
 
 ### feature:
 * receive the entry file stream and scan for all the require dependiences
