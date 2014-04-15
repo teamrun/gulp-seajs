@@ -7,16 +7,16 @@
     "test": "test"
   },
   "scripts": {
-    "test": "node index.js"
+    "test": "mocha spec.js -R spec"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wiz-Cll/gulp-seajs.git"
+    "url": "https://github.com/teamrun/gulp-seajs.git"
   },
   "dependencies": {
     "gulp": ">3.4.0",
     "event-stream": "3.0.2",
-    "mocha": "*"
+    "should": "~3.3.0"
   },
   "keywords": [
     "gulpplugin",

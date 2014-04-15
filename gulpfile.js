@@ -2,13 +2,11 @@ var gulp = require('gulp');
 
 var seajsBuilder = require('./index.js');
 
-var mainFileSrc = 'test/ctrl/testCtrl.js';
-var mainID = 'dist/testCtrl.js';
-var destPath = 'test/dist';
+var opt = require('./testBuildOption.js');
 
 
 gulp.task( 'default', function(){
-    gulp.src( mainFileSrc )
-        .pipe( seajsBuilder( mainID ) )
-        .pipe( gulp.dest( destPath ) );
+    gulp.src( opt.srcFile )
+        .pipe( seajsBuilder( opt.mainID ) )
+        .pipe( gulp.dest( opt.destPath ) );
 });

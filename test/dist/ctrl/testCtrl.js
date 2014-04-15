@@ -1,4 +1,4 @@
-define( 'dist/testCtrl.js', ['view/view_one', 'common/tool', 'view/view_two', 'view/subView/view_three', 'model/model_one', 'model/model_two'], function( require, exports, module){
+define( '/dist/ctrl/testCtrl', ['/dist/view/view_one', '/dist/common/tool', '/dist/view/view_two', '/dist/view/subView/view_three', '/dist/model/model_one', '/dist/model/model_two'], function( require, exports, module){
     var view_one = require('../view/view_one'),
         view_two = require('../view/view_two'),
         view_three = require('../view/subView/view_three');
@@ -14,7 +14,7 @@ define( 'dist/testCtrl.js', ['view/view_one', 'common/tool', 'view/view_two', 'v
 
     // module.exports = tool;
 } );
-define( 'view/view_one', ['common/tool'], function( require, exports, module){
+define( '/dist/view/view_one', ['/dist/common/tool'], function( require, exports, module){
     var tool = require('../common/tool');
 
 
@@ -25,7 +25,7 @@ define( 'view/view_one', ['common/tool'], function( require, exports, module){
     }
     exports.init = init;
 } );
-define( 'common/tool', [], function( require, exports, module){
+define( '/dist/common/tool', [], function( require, exports, module){
     var tool = {
         hammer: function(){
             console.log( 'a smith\'s tool');
@@ -34,7 +34,7 @@ define( 'common/tool', [], function( require, exports, module){
 
     module.exports = tool;
 } );
-define( 'view/view_two', [], function( require, exports, module){
+define( '/dist/view/view_two', [], function( require, exports, module){
     var tool = require('../common/tool');
     
     function init(){
@@ -45,7 +45,7 @@ define( 'view/view_two', [], function( require, exports, module){
 
     exports.init = init;
 } );
-define( 'view/subView/view_three', [], function( require, exports, module){
+define( '/dist/view/subView/view_three', [], function( require, exports, module){
     var tool = require('../../common/tool');
     function init(){
         console.log('bind event 11111');
@@ -53,7 +53,7 @@ define( 'view/subView/view_three', [], function( require, exports, module){
     }
     exports.init = init;
 } );
-define( 'model/model_one', [], function( require, exports, module){
+define( '/dist/model/model_one', [], function( require, exports, module){
     var M_one = {
         name: 'this is Model one...'
     };
@@ -61,7 +61,7 @@ define( 'model/model_one', [], function( require, exports, module){
 
     module.exports = M_one;
 } );
-define( 'model/model_two', [], function( require, exports, module){
+define( '/dist/model/model_two', [], function( require, exports, module){
     var M_two = {
         name: 'Model two here~'
     };
