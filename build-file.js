@@ -1,5 +1,6 @@
-var fs = require('fs'),
-    path = require('path');
+var fs = require('fs');
+var path = require('path');
+var url = require('url');
 
 var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^\/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g;
 var SLASH_RE = /\\\\/g;
@@ -39,7 +40,10 @@ function buildSeajsFile( srcPath, id, code ){
         if( path.extname( x ) === '.js' ){
             x = x.substring( 0, x.lastIndexOf( '.js' ) );
         }
-        var depItem = path.resolve( path.dirname( srcPath ), x );
+        // console.log( '解析下一个需要读取的文件的路径: \n\t 本文件路径:' + srcPath + ';\n\t\t  require引入的文件相对路径: ' + x  );
+        // windows下, 如果是基础文件的全路径, 会影响../查找父级目录, 需要换成srcPath的dirPath
+        var depItem = path.resolve(  path.dirname(srcPath), x );
+        // console.log('resolve出的路径是: ' + depItem );
 
         if( G.requriedDep[ depItem ] ){
             // 已经添加的依赖不再操作
@@ -50,7 +54,7 @@ function buildSeajsFile( srcPath, id, code ){
 
             // 根据mainID 和 模块依赖关系, 推断出被依赖的模块的id
             // 依据: 主模块被use后, 会根据内部的require的id去找依赖的模块, 依赖的id, 就是模块之间的路径关系
-            var subID = path.resolve( path.dirname( id ), x );
+            var subID = url.resolve( id, x );
             // 构建依赖表
             G.depMap[id].push( subID );
 
@@ -60,7 +64,8 @@ function buildSeajsFile( srcPath, id, code ){
             }
             else{
                 // 递归处理: 读code 取依赖, 检测, 构建模块
-                // console.log( depItem );
+                // console.log( 'gonna read file ' + depItem + ',   its id is ' + subID );
+                // TODO 放开注释...
                 buildSeajsFile( depItem+'.js', subID  );
             }
         }
@@ -152,7 +157,8 @@ var seajsHeadArr = [
 
 
 module.exports = function( srcPath, mainID, code ){
-    // console.log( srcPath );
+    // console.log( '接收到的参数有: ' );
+    // console.log( srcPath + ' | ' + mainID );
     G = {
         requriedDep: {},
         ProductCode:  '',
@@ -162,8 +168,8 @@ module.exports = function( srcPath, mainID, code ){
     };
 
     // add target file to required
-    G.requriedDep[ path.resolve(srcPath) ] = true;
-    
+    G.requriedDep[ url.resolve(srcPath, '') ] = true;
+    // console.log( 'gonna read file:  ' + srcPath + ',   its id is:  ' + mainID );
     buildSeajsFile( srcPath, mainID );
     // 所有的文件都构建好之后才有完整的依赖列表
     // console.log( G.depMap );

@@ -1,9 +1,8 @@
 define( function(require, exports, module ){
-    function init(){
-        console.log('fetch data 11111');
-        console.log('cons cache 11111');
-    }
+    var M_two = {
+        name: 'Model two here~'
+    };
 
 
-    exports.init = init;
+    module.exports = M_two;
 } );

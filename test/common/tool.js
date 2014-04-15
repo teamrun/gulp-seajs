@@ -1,7 +1,7 @@
 define( function(require, exports, module ){
     var tool = {
         hammer: function(){
-            return 'a smith\'s tool';
+            console.log( 'a smith\'s tool');
         }
     };
 

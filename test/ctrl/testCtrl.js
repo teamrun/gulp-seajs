@@ -6,6 +6,9 @@ define( function(require, exports, module ){
     var model_one = require('../model/model_one'),
         model_two = require('../model/model_two');
 
+    console.log(model_one.name);
+    console.log(model_two.name);
+
     view_one.init();
     view_two.init();
 
