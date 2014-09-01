@@ -4,8 +4,7 @@
 ```
 npm install -g mocha
 cd gulp-seajs
-npm install
-mocha spec.js -R spec
+npm test
 ```
 
 

@@ -6,14 +6,17 @@ gulp-seajs is a plugin to build seajs modules.
     
     npm install gulp-seajs --save
 
+### test
+
+    npm test
 ### use:
     
     var seajs = require('gulp-seajs');
 
     gulp.task('seajs build', function(){
-        gulp.src(‘mainfile.js’)
-        .pipe( seajs(‘mainID’) )
-        .pipe( gulp.dest( ‘/dist’ ) );
+        gulp.src('mainfile.js')
+        .pipe( seajs('mainID') )
+        .pipe( gulp.dest( '/dist' ) );
     });
 
 result:
