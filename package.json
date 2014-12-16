@@ -1,6 +1,6 @@
 {
   "name": "gulp-seajs",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "seajs builder for gulp",
   "main": "index.js",
   "directories": {
