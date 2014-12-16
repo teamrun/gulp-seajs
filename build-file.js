@@ -54,7 +54,8 @@ function buildSeajsFile( srcPath, id, code ){
 
             // 根据mainID 和 模块依赖关系, 推断出被依赖的模块的id
             // 依据: 主模块被use后, 会根据内部的require的id去找依赖的模块, 依赖的id, 就是模块之间的路径关系
-            var subID = url.resolve( id, x );
+            // node 0.11.14使用url.resolve会将带有{}的路径进行转义
+            var subID = decodeURI(url.resolve( id, x ));
             // 构建依赖表
             G.depMap[id].push( subID );
 
