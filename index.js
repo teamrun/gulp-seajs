@@ -3,14 +3,14 @@ var stream = require('stream');
 
 var buildTool = require('./build-file');
 
-module.exports = function( mainID ){
+module.exports = function( mainID, options ){
     var doBuild = function( file, callback ){
-        // console.log( arguments );
+        // console.log( file );
 
         var code = String(file.contents);
         var srcPath = String(file.path);
         // console.time('seajs');
-        file.contents = new Buffer( buildTool( srcPath, mainID, code ) );
+        file.contents = new Buffer( buildTool( srcPath, mainID, code, options ) );
         // console.timeEnd('seajs');
 
         callback( null, file);

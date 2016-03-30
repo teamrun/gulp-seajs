@@ -22,20 +22,26 @@ var G = {
     ProductCode:  ''
 };
 
+// seajs config
+// Bino Yip
+var C = {
+
+};
 
 
 
 
 function buildSeajsFile( srcPath, id, code ){
+    // console.log('code: '+ srcPath);
     if( !code ){
         code = fs.readFileSync( srcPath, 'utf-8');
     }
     // console.log( id );
-    var rawDep =  collectDep( code );
+    var rawDep =  collectDep( code, srcPath );
     G.ProductCode +=  consProductCode( code, id, rawDep );
 
     G.depMap[ id ] = [];
-
+    // console.log('rawDep: '+ rawDep);
     rawDep.forEach( function( x, i, a ){
         if( path.extname( x ) === '.js' ){
             x = x.substring( 0, x.lastIndexOf( '.js' ) );
@@ -78,7 +84,7 @@ function buildSeajsFile( srcPath, id, code ){
 
 
 
-function collectDep( code ){
+function collectDep( code, srcPath ){
     var ret = [];
     code.replace(SLASH_RE, "")
         .replace(REQUIRE_RE, function(m, m1, m2) {
@@ -86,7 +92,8 @@ function collectDep( code ){
                 ret.push(m2);
             }
         });
-    return ret;
+    // return ret;
+    return replaceDep(ret, srcPath);
 }
 
 function consProductCode( code, id, dep ){
@@ -157,7 +164,85 @@ var seajsHeadArr = [
 // } );
 
 
-module.exports = function( srcPath, mainID, code ){
+// 读取config文件对象
+// Bino Yip
+function readConfigToObj(options) {
+    var CONFIG_RE = /[\s\S]*seajs.config\s*\(|\)[\s\S]*;*$/g,
+        config = {},
+        code = '';
+
+    if (options || options.configSrc) {
+        code = fs.readFileSync(options.configSrc, 'utf-8').replace(CONFIG_RE, '');
+    }
+    // console.log('code: '+ code);
+    if (code) {
+        try {
+            config = eval("("+ code +")");
+        } catch(e) {
+            console.log('Config file error!!!!');
+        }
+    }
+    return config;
+}
+
+
+// 处理require路径（base、paths、alias）
+// Bino Yip
+function replaceDep(rawDep, srcPath) {
+    var dep = rawDep || [],
+        _cwd = process.cwd(),
+        _base = C.base || './',
+        _paths = C.paths,
+        _alias = C.alias,
+        PATHS_RE = /^([^/:]+)(\/.+)$/,
+        ABSOLUTE_RE = /^\/\/.|:\//,
+        ROOT_DIR_RE = /^.*?\/\/.*?\//;
+
+
+    // require路径替换alias
+    var parseAlias = function(id) {
+        return _alias && _alias[id] ? _alias[id] : id;
+    };
+
+    // require路径替换paths
+    var parsePaths = function(id) {
+        var m;
+        if (_paths && (m = id.match(PATHS_RE)) && _paths[m[1]]) {
+            id = _paths[m[1]] + m[2];
+        }
+        return id;
+    };
+
+    // require路径转换成主文件的相对路径
+    var transRelPath = function(id) {
+        var ret,
+            first = id.charCodeAt(0);
+
+        // Relative
+        if (first === 46 /* "." */ ) {
+            ret = id;
+        }
+        // Top-level
+        else {
+            ret = path.relative(path.dirname(srcPath), path.resolve(_cwd, _base) + '\\' + id);
+        }
+        
+        return ret;
+    };
+
+    return dep.map(function(x){
+        var item = x;
+
+        item = parseAlias(item);
+        item = parsePaths(item);
+        item = transRelPath(item);
+
+        return item;
+    });
+}
+
+
+module.exports = function( srcPath, mainID, code, options ){
     // console.log( '接收到的参数有: ' );
     // console.log( srcPath + ' | ' + mainID );
     G = {
@@ -167,6 +252,8 @@ module.exports = function( srcPath, mainID, code ){
 
         }
     };
+
+    C = readConfigToObj(options);
 
     // add target file to required
     G.requriedDep[ url.resolve(srcPath, '') ] = true;
