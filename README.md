@@ -34,6 +34,7 @@ result:
 
 
 config.js:
+
     seajs.config ({
         base: './js/',
         paths: {
@@ -43,6 +44,7 @@ config.js:
             footer: 'libs/footer/footer'
         }
     });
+    
 
 ### param: 
 
