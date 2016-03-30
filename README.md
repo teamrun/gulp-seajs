@@ -15,7 +15,7 @@ gulp-seajs is a plugin to build seajs modules.
 
     gulp.task('seajs build', function(){
         gulp.src('mainfile.js')
-        .pipe( seajs('mainID') )
+        .pipe( seajs('mainID') )   // .pipe( seajs('mainID', {configSrc: './js/config.js'}) )
         .pipe( gulp.dest( '/dist' ) );
     });
 
@@ -33,10 +33,22 @@ result:
     // other module's defininations ...
 
 
+config.js:
+    seajs.config ({
+        base: './js/',
+        paths: {
+            libs: 'components'
+        },
+        alias: {
+            footer: 'libs/footer/footer'
+        }
+    });
+
 ### param: 
 
 * gulp.src:  you should read the main js file which you seajs.use
 * mainID: the main Module ID for the seajs app entrance. ~~Should be an absolute path based on your project~~ both relative path and abslute path are supported. but relative path will based on your sea.js file, it brings more complexity
+* options: {configSrc: './js/seajs-config.js'} ; supported base、 alias、 paths
 
 ### feature:
 * receive the entry file stream and scan for all the require dependiences
